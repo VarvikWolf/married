@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приглашение</title>
+    <style>
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .initially-hidden {
+        opacity: 0;
+        visibility: hidden;
+        }
+
+        .animate-fade {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .animate-zoom {
+            animation: zoomIn 1s ease-out forwards;
+        }
+
+        .animate-slide-left {
+            animation: slideInLeft 1s ease-out forwards;
+        }
+
+        .animate-slide-right {
+            animation: slideInRight 1s ease-out forwards;
+        }
+
+        .animate-delay-1 {
+            animation-delay: 0.3s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.6s;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.9s;
+        }
+
+        .animate-delay-4 {
+            animation-delay: 1.2s;
+        }
+
+        [data-animate] {
+            opacity: 0;
+        }
+
+        /* Основные стили */
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-top: 5px;
+            transition: border 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: #b38a6d;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(179, 138, 109, 0.2);
+        }
+
+        .hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .question-group {
+            margin-bottom: 20px;
+        }
+
+        .question:after {
+            content: " *";
+            color: #d32f2f;
+            opacity: 0;
+        }
+
+        .question-group[required] .question:after,
+        input[required] + .question:after {
+            opacity: 1;
+        }
+
+        .event-schedule {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0px 0;
+            font-size: 0.9rem;
+        }
+
+        .event-schedule td {
+            vertical-align: baseline;
+            padding: 5px 0;
+        }
+
+        .time {
+            white-space: nowrap;
+            padding-right: 10px;
+        }
+
+        .spacing {
+            white-space: pre;
+            width: 50%;
+        }
+
+        .event {
+            padding-left: 5px;
+        }
+
+        .questionnaire {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 50px;
+            max-width: 600px;
+            width: 90%;
+            color: #000;
+        }
+
+        .questionnaire h2 {
+            font-family: 'Playfair Display', serif;
+            color: #000;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .question {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            color: #000;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            color: #000;
+        }
+
+        .option input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: #b38a6d;
+        }
+
+        .submit-btn {
+            background-color: #b38a6d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #9a7357;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Playfair Display', serif;
+            color: rgb(0, 0, 0);
+            text-align: center;
+            font-weight: 300;
+        }
+
+        body {
+            background-color: #ede5e2;
+            min-height: 650vh;
+        }
+
+        .photo-container {
+            width: 100%;
+            height: 100vh;
+            background-image: url('Photo/ArtemKata.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 0;
+        }
+
+        .names-container {
+            position: relative;
+            z-index: 1;
+            margin: 10px 0;
+        }
+
+        .name {
+            font-size: 4rem;
+            letter-spacing: 3px;
+            font-weight: 10;
+            color: black;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px 0;
+        }
+
+        .line {
+            width: 80px;
+            height: 1px;
+            background-color: rgb(0, 0, 0);
+            margin: 0 20px;
+        }
+
+        .and {
+            font-size: 1rem;
+            font-style: italic;
+            color: black;
+        }
+
+        .text-block {
+            position: relative;
+            z-index: 1;
+            margin: 5px 0;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            font-weight: 300;
+            max-width: 80%;
+            line-height: 1.6;       
+            color: black;
+        }
+
+        .date-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .date-number {
+            font-size: 1rem;
+            letter-spacing: 0px;
+            font-weight: 300;
+            color: black;
+        }
+
+        .date-text {
+            font-size: 1.2rem;
+            color: black;
+            margin: 0 15px;
+        }
+
+        .date-line {
+            width: 40px;
+            height: 1px;
+            background-color: black;
+            margin: 0 2px;
+        }
+
+        .timer {
+            display: flex;
+            position: relative;
+            z-index: 1;
+            margin-top: 30px;
+        }
+
+        .timer-block {
+            margin: 0 10px;
+        }
+
+        .timer-value {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: black;
+        }
+
+        .timer-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-top: 5px;
+            letter-spacing: 1px;
+            color: black;
+        }
+
+        .additional-block {
+            position: relative;
+            z-index: 1;
+            margin-top: 150px;
+            color: rgb(0, 0, 0);
+            max-width: 80%;
+        }
+
+        .additional-block1 {
+            position: relative;
+            z-index: 1;
+            margin-top: 60px;
+            color: rgb(0, 0, 0);
+            max-width: 80%;
+        }
+
+        .small-photo {
+            width: 800px;
+            height: 600px;
+            object-fit: cover;
+            margin-top: 10px;
+        }
+
+        .invitation-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: black;
+            margin-bottom: 1px;
+        }
+
+        .quote {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-top: 20px;
+            color: black;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .name {
+                font-size: 3rem;
+                font-family: 'Playfair Display SC', serif;
+                top: 100px;
+            }
+            
+            .date-number {
+                font-size: 1rem;
+                top: 10px;
+            }
+            
+            .date-text {
+                font-size: 1rem;
+                margin: 0 0px;
+            }
+            
+            .date-line {
+                width: 39px;
+                margin: 0 3px;
+            }
+            
+            .text-block {
+                font-size: 0.9rem;
+            }
+            
+            .timer-value {
+                font-size: 1.2rem;
+            }
+            
+            .timer-block {
+                margin: 0 6px;
+            }
+            
+            .small-photo {
+                width: 250px;
+                height: 150px;
+            }
+            
+            .quote {
+                font-size: 1rem;
+            }
+        }
+
+        .names-container { margin-top: 4300px; }
+        .text-block { margin-top: 10px; }
+        .date-row { margin-top: 5px; }
+        .timer { margin-top: 20px; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="photo-container">
+        <div class="names-container" data-animate="fade">
+            <div class="name animate-fade">Екатерина</div>
+            <div class="divider">
+                <div class="line"></div>
+                <div class="and">и</div>
+                <div class="line"></div>
+            </div>
+            <div class="name">Артём</div>
+        </div>
+        
+        <div class="text-block initially-hidden" data-animate="fade">
+            Будем счастливы разделить этот день вместе с вами
+        </div>
+        
+        <div class="date-row initially-hidden" data-animate="fade">
+            <div class="date-text">Ждём вас</div>
+        </div>
+        <div class="date-number initially-hidden" data-animate="fade">28.08</div>
+        
+        <div class="timer initially-hidden" data-animate="fade">    
+            <div class="timer-block">
+                <div class="timer-value" id="weeks">00</div>
+                <div class="timer-label">недель</div>
+            </div>
+            <div class="timer-block">
+                <div class="timer-value" id="days">00</div>
+                <div class="timer-label">дней</div>
+            </div>
+            <div class="timer-block">
+                <div class="timer-value" id="hours">00</div>
+                <div class="timer-label">часов</div>
+            </div>
+            <div class="timer-block">
+                <div class="timer-value" id="seconds">00</div>
+                <div class="timer-label">секунд</div>
+            </div>
+        </div>
+        
+        <div class="additional-block" data-animate="zoom">
+            <div class="invitation-text animate-zoom">
+                ДОРОГОЙ ГОСТЬ!<br><br>
+                Мы рады сообщить Вам, что 28.08.2025<br>
+                состоится самое главное торжество в нашей<br>
+                жизни - день нашей свадьбы!<br><br>
+                Приглашаем Вас разделить с нами радость<br>
+                этого незабываемого дня.
+            </div>
+            <img src="Photo/small-photo.jpg" alt="Фото" class="small-photo animate-zoom animate-delay-1">
+            <div class="quote animate-zoom animate-delay-2">
+                ТАМ, ГДЕ ПОСЕЯНА ЛЮБОВЬ,<br>
+                РАСТЁТ СЧАСТЬЕ
+            </div>
+        </div>
+        
+        <div class="additional-block1" data-animate="slide-right">
+            <div class="invitation-text animate-slide-right">
+                МЕНЮ <br><br>  
+                Меню разнообразно, поэтому сообщите нам заранее, если у вас есть какие-либо предпочтения или диетические ограничения. После подтверждения вы сможете пройти опрос о своих вкусовых предпочтениях и напитках.
+            </div>
+        </div>
+        
+        <div class="additional-block1" data-animate="slide-left">
+            <div class="invitation-text animate-slide-left">
+                ПОЖЕЛАНИЯ ПО ПОДАРКАМ   <br><br>  
+                Ваше присутствие в день нашей свадьбы – самый значимый подарок для нас!<br><br>
+                Мы понимаем, что дарить цветы на свадьбу – это традиция, но мы не сможем насладиться их красотой в полной мере, так как после праздника отправимся в путешествие. Также просим вас учесть, что бытовая техника и другие предметы быта нам не нужны - у нас уже есть всё необходимое. Будем рады вашим подаркам в конвертах.
+            </div>
+        </div>
+        
+        <div class="additional-block1" data-animate="fade">
+            <div class="invitation-text animate-fade">
+                ПОДТВЕРЖДЕНИЕ    <br><br>  
+                Пожалуйста, подтвердите свое присутствие  
+                до 15.07.2025  
+            </div>
+        </div>
+        
+        <div class="additional-block1" data-animate="zoom">
+            <div class="invitation-text animate-zoom">
+                ДРЕСС-КОД    <br><br>  
+                Мы будем рады, если для посещения нашего мероприятия Вы выберете однотонные элегантные платья природных оттенков средней длины или классические костюмы любых цветов, кроме темно-синего. Ниже представлены референсы. 
+            </div>
+            <img src="Photo/DEVKI.jpg" alt="Фото" class="small-photo animate-zoom animate-delay-1">
+        </div>
+        
+        <div class="questionnaire" data-animate="fade">
+            <h2 class="animate-fade">Анкета гостя</h2>
+            
+            <form id="guestForm" action="https://formspree.io/f/xpwrkgdb" method="POST" class="animate-fade animate-delay-1">
+                <div class="question-group">
+                    <label for="guest-name" class="question">Имя *</label>
+                    <input type="text" id="guest-name" name="Имя" placeholder="Ваше имя" required class="form-input">
+                </div>
+        
+                <div class="question-group">
+                    <label for="guest-surname" class="question">Фамилия *</label>
+                    <input type="text" id="guest-surname" name="Фамилия" placeholder="Ваша фамилия" required class="form-input">
+                </div>
+        
+                <div class="question-group">
+                    <span class="question">Требуется ли вам трансфер?</span>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="Трансфер" value="Не требуется" checked> Нет
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="Трансфер" value="Только до торжества"> Только до торжества
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="Трансфер" value="Только после торжества"> Только после торжества
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="Трансфер" value="До и после торжества"> До и после торжества
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="question-group">
+                    <span class="question">Есть ли у вас аллергия на какие-либо продукты? (можно выбрать несколько)</span>
+                    <div class="options">
+                        <label class="option">
+                            <input type="checkbox" name="allergy[]" value="нет"> Нет аллергии
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="allergy[]" value="Морепродукты"> На морепродукты
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="allergy[]" value="Рыба"> На рыбу
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="allergy[]" value="Цитрусовые"> На цитрусовые
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="allergy[]" value="other"> Другое (уточните ниже)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="question-group">
+                    <span class="question">Какой алкоголь вы предпочитаете? (можно выбрать несколько)</span>
+                    <div class="options">
+                        <label class="option">
+                            <input type="checkbox" name="alc[]" value="Не пью"> Не пью
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="alc[]" value="Красное вино"> Красное вино
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="alc[]" value="Белое вино"> Белое вино
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="alc[]" value="Шампанское"> Шампанское
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="alc[]" value="Виски"> Виски
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="alc[]" value="Коньяк"> Коньяк
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="alc[]" value="other"> Другое (уточните ниже)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="question-group">
+                    <label for="comments" class="question">Дополнительные пожелания или комментарии</label>
+                    <textarea id="comments" name="comments" rows="3" style="width: 100%; padding: 8px;"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Отправить ответы</button>
+    
+                <input type="hidden" name="_subject" value="Новый ответ на анкету свадьбы">
+            </form>
+        </div>
+        
+        <div class="additional-block1" data-animate="slide-right">
+            <div class="invitation-text animate-slide-right">
+                СВАДЕБНОЕ РАСПИСАНИЕ<br><br>
+            </div>
+            <table class="event-schedule animate-slide-right animate-delay-1">
+                <tr>
+                    <td class="time">14:00</td>
+                    <td class="spacing">     </td>
+                    <td class="event">Фуршет</td>
+                </tr>
+                <tr>
+                    <td class="time">15:00</td>
+                    <td class="spacing">     </td>
+                    <td class="event">Торжественная церемония</td>
+                </tr>
+                <tr>
+                    <td class="time">16:00</td>
+                    <td class="spacing">     </td>
+                    <td class="event">Банкет с развлекательной программой</td>
+                </tr>
+                <tr>
+                    <td class="time">22:00</td>
+                    <td class="spacing">     </td>
+                    <td class="event">Завершение мероприятия</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="additional-block1" data-animate="zoom">
+            <div class="invitation-text animate-zoom">
+                МЕСТО ПРОВЕДЕНИЯ<br><br>
+                Торжество состоится по адресу:<br>
+                <strong>Нижний Новгород, Городецкий район, д. Большой Суходол</strong> 
+            </div>
+            <img src="Photo/shater.jpg" alt="Фото" class="small-photo animate-zoom animate-delay-1">
+        </div>
+        
+        <div style="width: 100%; max-height: 100px; background-color: #000;"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Сначала скрываем элементы, которые должны анимироваться
+            const elementsToAnimate = [
+                '.text-block',      // Текст "Будем счастливы..."
+                '.date-row',        // Блок "Ждём вас"
+                '.date-number',     // Дата "28.08"
+                '.timer',           // Таймер
+                '.additional-block', // Основной блок с приглашением
+                '.additional-block1', // Все дополнительные блоки
+                '.questionnaire'    // Анкета гостя
+            ];
+        
+            elementsToAnimate.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.visibility = 'hidden';
+                    el.setAttribute('data-animate', 'fade');
+                });
+            });
+        
+            // 2. Настройка анимаций при прокрутке
+            const animateElements = document.querySelectorAll('[data-animate]');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animationType = entry.target.getAttribute('data-animate');
+                        entry.target.style.visibility = 'visible';
+                        entry.target.style.opacity = '1';
+                        entry.target.classList.add(`animate-${animationType}`);
+                        
+                        // Для элементов с задержкой
+                        if (entry.target.classList.contains('animate-delay-1')) {
+                            entry.target.style.animationDelay = '0.3s';
+                        }
+                        if (entry.target.classList.contains('animate-delay-2')) {
+                            entry.target.style.animationDelay = '0.6s';
+                        }
+                        if (entry.target.classList.contains('animate-delay-3')) {
+                            entry.target.style.animationDelay = '0.9s';
+                        }
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+        
+            animateElements.forEach(element => {
+                observer.observe(element);
+            });
+        
+            // 3. Таймер обратного отсчета
+            const weddingDate = new Date('2025-08-28T00:00:00');
+            
+            function updateTimer() {
+                const now = new Date();
+                const diff = weddingDate - now;
+                
+                if (diff <= 0) {
+                    document.getElementById('weeks').textContent = '00';
+                    document.getElementById('days').textContent = '00';
+                    document.getElementById('hours').textContent = '00';
+                    document.getElementById('seconds').textContent = '00';
+                    return;
+                }
+                
+                const weeks = Math.floor(diff / (1000 * 60 * 60 * 24 * 7));
+                const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                document.getElementById('weeks').textContent = weeks.toString().padStart(2, '0');
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            }
+            
+            // Запускаем таймер только после появления элемента
+            const timerElement = document.querySelector('.timer');
+            const timerObserver = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    updateTimer();
+                    setInterval(updateTimer, 1000);
+                    timerObserver.unobserve(timerElement);
+                }
+            });
+            
+            timerObserver.observe(timerElement);
+        
+            // 4. Обработка формы анкеты
+            document.getElementById('guestForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const submitBtn = this.querySelector('[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Отправка...';
+                
+                // Анимация кнопки при отправке
+                submitBtn.style.transition = 'all 0.3s';
+                submitBtn.style.transform = 'scale(0.95)';
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: new FormData(this),
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Анимация успешной отправки
+                        submitBtn.style.backgroundColor = '#4CAF50';
+                        submitBtn.textContent = '✓ Отправлено';
+                        setTimeout(() => {
+                            this.reset();
+                            submitBtn.style.backgroundColor = '#b38a6d';
+                            submitBtn.textContent = 'Отправить ответы';
+                        }, 2000);
+                    } else {
+                        throw new Error('Ошибка отправки');
+                    }
+                })
+                .catch(error => {
+                    // Анимация ошибки
+                    submitBtn.style.backgroundColor = '#f44336';
+                    submitBtn.textContent = 'Ошибка!';
+                    setTimeout(() => {
+                        submitBtn.style.backgroundColor = '#b38a6d';
+                        submitBtn.textContent = 'Попробовать снова';
+                    }, 2000);
+                    console.error('Ошибка:', error);
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.style.transform = 'scale(1)';
+                    }, 300);
+                });
+            });
+        
+            // 5. Фолбэк для старых браузеров
+            if (!('IntersectionObserver' in window)) {
+                document.querySelectorAll('[data-animate]').forEach(el => {
+                    el.style.visibility = 'visible';
+                    el.style.opacity = '1';
+                    const animationType = el.getAttribute('data-animate');
+                    el.classList.add(`animate-${animationType}`);
+                });
+                
+                // Запускаем таймер сразу для старых браузеров
+                updateTimer();
+                setInterval(updateTimer, 1000);
+            }
+        });
+        </script>
+</body>
+</html>
